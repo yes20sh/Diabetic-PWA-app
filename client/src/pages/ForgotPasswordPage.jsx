@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -11,26 +12,26 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 px-3">
-      <div className="bg-white p-5 rounded-xl shadow-md w-full max-w-sm">
-        <h2 className="text-lg font-semibold text-purple-600 mb-4 text-center">
+    <div className="min-h-screen flex items-center justify-center bg-black px-4">
+      <div className="bg-[#000000] p-6 sm:p-8 rounded-xl shadow-xl w-full max-w-sm sm:max-w-md">
+        <h2 className="text-center text-xl sm:text-2xl font-bold text-teal-400 mb-2">
           Forgot Your Password?
         </h2>
 
         {submitted ? (
-          <p className="text-center text-sm text-gray-700">
-            If an account with <span className="font-medium">{email}</span> exists, 
-            you will receive an email with instructions to reset your password.
+          <p className="text-center text-sm text-zinc-300 mt-4">
+            If an account with <span className="text-white font-medium">{email}</span> exists, 
+            you'll receive an email with reset instructions.
           </p>
         ) : (
-          <form className="space-y-4" onSubmit={handleSubmit}>
+          <form className="space-y-4 mt-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-xs font-medium text-gray-700">
+              <label className="block text-sm font-medium text-orange-400">
                 Enter your email address
               </label>
               <input
                 type="email"
-                className="w-full mt-1 p-2 border border-purple-200 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-400 text-sm"
+                className="w-full mt-1 p-3 border border-gray-600 bg-transparent text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base"
                 placeholder="you@email.com"
                 required
                 value={email}
@@ -39,18 +40,18 @@ const ForgotPasswordPage = () => {
             </div>
             <button
               type="submit"
-              className="w-full bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-lg font-medium text-sm transition"
+              className="w-full bg-teal-600 hover:bg-teal-800 text-white py-2 rounded-lg font-medium transition duration-200 text-sm sm:text-base"
             >
               Send Reset Link
             </button>
           </form>
         )}
 
-        <p className="text-center text-xs text-gray-500 mt-3">
+        <p className="text-center text-sm text-zinc-300 mt-5">
           Remember your password?{' '}
-          <a href="/" className="text-purple-600 font-medium hover:underline">
+          <Link to="/" className="text-teal-400 font-semibold hover:underline">
             Sign In
-          </a>
+          </Link>
         </p>
       </div>
     </div>

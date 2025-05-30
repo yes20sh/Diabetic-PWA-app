@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // useNavigate hook
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // You can add authentication logic here
+    navigate('/dashboard');
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#000000] px-4">
@@ -36,13 +44,6 @@ const LoginPage = () => {
         </div>
       ) : (
         <div className="bg-black p-6 sm:p-8 rounded-xl shadow-xl w-full max-w-sm sm:max-w-md">
-          {/* 📷 Login Illustration */}
-          {/* <img 
-            src="475a064053a29c162c37edf464436b59-removebg-preview.png" // ✅ Make sure image is placed in /public/assets/
-            alt="Login"
-            className="mx-auto mb-5 w-320 h-62 object-contain sm:w-36 sm:h-36"
-          /> */}
-
           <h2 className="text-center text-xl sm:text-2xl font-bold text-teal-400 mb-2">
             Welcome Back!
           </h2>
@@ -50,7 +51,7 @@ const LoginPage = () => {
             Let's login to continue tracking your sugar levels.
           </p>
 
-          <form className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-orange-400">Email</label>
               <input
@@ -68,8 +69,8 @@ const LoginPage = () => {
                 placeholder="••••••••"
                 required
               />
-              <div className="text-right text-xs text-zinc-300 mt-1 hover:underline cursor-pointer">
-                Forgot password?
+              <div className="text-right text-xs text-zinc-300 mt-1 hover:underline">
+                <Link to="/forgot-password">Forgot password?</Link>
               </div>
             </div>
             <button
@@ -97,9 +98,9 @@ const LoginPage = () => {
 
           <p className="text-center text-sm text-zinc-300 mt-5">
             Don’t have an account?{' '}
-            <a href="#" className="text-teal-400 font-semibold hover:underline">
+            <Link to="/register" className="text-teal-400 font-semibold hover:underline">
               Sign Up
-            </a>
+            </Link>
           </p>
         </div>
       )}
@@ -108,7 +109,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
-
-
-

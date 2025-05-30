@@ -1,12 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const FrontPage = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="grid grid-cols-1 md:grid-cols-2 max-w-6xl w-full gap-8 p-6 sm:p-10 rounded-xl shadow-2xl bg-[#0d0d0d]">
+        
         {/* Left Side - Image */}
         <div className="flex items-center justify-center">
           <img
@@ -27,18 +26,18 @@ const FrontPage = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={() => navigate('/login')}
-              className="w-full sm:w-auto bg-teal-600 hover:bg-teal-800 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base transition duration-200"
+            <Link
+              to="/"
+              className="w-full sm:w-auto bg-teal-600 hover:bg-teal-800 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base text-center transition duration-200"
             >
               Sign In
-            </button>
-            <button
-              onClick={() => navigate('/signup')}
-              className="w-full sm:w-auto border border-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base transition duration-200"
+            </Link>
+            <Link
+              to="/register"
+              className="w-full sm:w-auto border border-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base text-center transition duration-200"
             >
               Sign Up
-            </button>
+            </Link>
           </div>
         </div>
       </div>
