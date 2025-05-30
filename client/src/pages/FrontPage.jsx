@@ -10,7 +10,7 @@ const FrontPage = () => {
         {/* Left Side - Image */}
         <div className="flex items-center justify-center">
           <img
-            src="Diabetes-amico-removebg-preview.png" // 📌 Save image in public/assets/
+            src="Diabetes-amico-removebg-preview.png" 
             alt="Health Monitoring"
             className="w-full max-w-md"
           />
