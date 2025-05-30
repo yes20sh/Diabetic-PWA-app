@@ -5,6 +5,7 @@ import RegisterPage from '../pages/RegisterPage';
 import ForgotPasswordPage from '../pages/ForgotPasswordPage';
 import DashboardPage from '../pages/DashboardPage';
 import MedicinePage from '../pages/MedicinePage';
+import FrontPage from '../pages/FrontPage';
 
 const AppRouter = () => {
   return (
@@ -13,7 +14,8 @@ const AppRouter = () => {
       <Route path='/register' element={<RegisterPage />} />
       <Route path='/forgot-password' element={<ForgotPasswordPage />} />
       <Route path='/dashboard' element={<DashboardPage/>} />
-      <Route path='medicine' element={<MedicinePage/>} />
+      <Route path='/medicine' element={<MedicinePage/>} />
+      <Route path='/front' element={<FrontPage/>} />
     </Routes>
 
   )
