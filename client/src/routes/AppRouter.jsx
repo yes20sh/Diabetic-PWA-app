@@ -10,12 +10,12 @@ import FrontPage from '../pages/FrontPage';
 const AppRouter = () => {
   return (
     <Routes>
-      <Route path='/' element={<LoginPage />} />
+      <Route path='/login' element={<LoginPage />} />
       <Route path='/register' element={<RegisterPage />} />
       <Route path='/forgot-password' element={<ForgotPasswordPage />} />
       <Route path='/dashboard' element={<DashboardPage/>} />
       <Route path='/medicine' element={<MedicinePage/>} />
-      <Route path='/front' element={<FrontPage/>} />
+      <Route path='/' element={<FrontPage/>} />
     </Routes>
 
   )
