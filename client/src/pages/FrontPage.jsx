@@ -1,7 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const FrontPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="grid grid-cols-1 md:grid-cols-2 max-w-6xl w-full gap-8 p-6 sm:p-10 rounded-xl shadow-2xl bg-[#0d0d0d]">
@@ -10,7 +12,7 @@ const FrontPage = () => {
         <div className="flex items-center justify-center">
           <img
             src="Diabetes-amico-removebg-preview.png" 
-            alt="Health Monitoring"
+            alt="Diabetes health monitoring illustration"
             className="w-full max-w-md"
           />
         </div>
@@ -30,14 +32,14 @@ const FrontPage = () => {
               to="/login"
               className="w-full sm:w-auto bg-teal-600 hover:bg-teal-800 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base text-center transition duration-200"
             >
-              Sign In
+              Login
             </Link>
-            <Link
-              to="/register"
-              className="w-full sm:w-auto border border-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base text-center transition duration-200"
+            <button
+              onClick={() => navigate('/register')}
+              className="w-full sm:w-auto border border-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base transition duration-200"
             >
-              Sign Up
-            </Link>
+              Create Account
+            </button>
           </div>
         </div>
       </div>
