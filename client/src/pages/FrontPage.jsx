@@ -30,6 +30,7 @@ const FrontPage = () => {
               to="/"
               className="w-full sm:w-auto bg-teal-600 hover:bg-teal-800 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base text-center transition duration-200"
             >
+<<<<<<< HEAD
               Sign In
             </Link>
             <Link
@@ -38,6 +39,16 @@ const FrontPage = () => {
             >
               Sign Up
             </Link>
+=======
+              Login
+            </button>
+            <button
+              onClick={() => navigate('/register')}
+              className="w-full sm:w-auto border border-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base transition duration-200"
+            >
+              Create Account
+            </button>
+>>>>>>> 928c9d3 (feat : backend update)
           </div>
         </div>
       </div>
