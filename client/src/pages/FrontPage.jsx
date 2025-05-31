@@ -17,7 +17,7 @@ const FrontPage = () => {
 
         {/* Right Side - Text + Buttons */}
         <div className="flex flex-col justify-center">
-          <h1 className="text-3xl sm:text-4xl font-bold text-teal-400 mb-4">
+          <h1 className="text-3xl sm:text-4xl font text-teal-400 mb-4 pt-sans">
             Track Your Sugar, Own Your Health.
           </h1>
           <p className="text-gray-300 text-base sm:text-lg mb-8">
@@ -27,7 +27,7 @@ const FrontPage = () => {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
-              to="/"
+              to="/login"
               className="w-full sm:w-auto bg-teal-600 hover:bg-teal-800 text-white py-3 px-6 rounded-lg font-semibold text-sm sm:text-base text-center transition duration-200"
             >
               Sign In
