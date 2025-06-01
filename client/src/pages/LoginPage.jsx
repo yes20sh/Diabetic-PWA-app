@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react'; // 👈 Eye icons from lucide-react
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -31,7 +33,7 @@ const LoginPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // necessary to send cookies
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
@@ -90,21 +92,29 @@ const LoginPage = () => {
                 disabled={submitting}
               />
             </div>
-            <div>
+
+            <div className="relative">
               <label className="block text-sm font-medium text-orange-400">Password</label>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full mt-1 p-3 border border-gray-600 bg-transparent text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base"
+                className="w-full mt-1 p-3 border border-gray-600 bg-transparent text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base pr-10"
                 placeholder="••••••••"
                 required
                 disabled={submitting}
               />
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-[46px] transform -translate-y-1/2 cursor-pointer text-white hover:text-teal-300"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </div>
               <div className="text-right text-xs text-zinc-300 mt-1 hover:underline cursor-pointer">
                 Forgot password?
               </div>
             </div>
+
             <button
               type="submit"
               className="w-full bg-teal-600 hover:bg-teal-800 text-white py-2 rounded-lg font-medium transition duration-200 text-sm sm:text-base disabled:opacity-60"
@@ -121,7 +131,7 @@ const LoginPage = () => {
           </div>
 
           <button className="w-full flex items-center justify-center border border-gray-600 text-white rounded-lg py-2 hover:bg-gray-800 transition duration-200">
-            <img
+            <img 
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
               className="w-5 h-5 mr-2"

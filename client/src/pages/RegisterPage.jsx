@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,8 @@ const RegisterPage = () => {
     username: '',
     password: '',
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,7 +31,6 @@ const RegisterPage = () => {
       const result = await res.json();
       if (res.ok) {
         alert('Registration successful!');
-        // Optionally reset form or navigate
         setFormData({ fullname: '', email: '', username: '', password: '' });
       } else {
         alert(result.message || 'Registration failed.');
@@ -53,7 +55,7 @@ const RegisterPage = () => {
               name="fullname"
               value={formData.fullname}
               onChange={handleChange}
-              className="w-full mt-1 p-2 border border-purple-200 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-400 text-sm"
+              className="w-full mt-1 p-3 border border-gray-600 rounded-lg text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base"
               placeholder="John Doe"
               required
             />
@@ -65,7 +67,7 @@ const RegisterPage = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full mt-1 p-2 border border-purple-200 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-400 text-sm"
+              className="w-full mt-1 p-3 border border-gray-600 rounded-lg text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base"
               placeholder="you@email.com"
               required
             />
@@ -77,22 +79,28 @@ const RegisterPage = () => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full mt-1 p-2 border border-purple-200 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-400 text-sm"
+              className="w-full mt-1 p-3 border border-gray-600 rounded-lg text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base"
               placeholder="yourusername"
               required
             />
           </div>
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium text-orange-400">Password</label>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full mt-1 p-2 border border-pink-200 rounded-md focus:outline-none focus:ring-1 focus:ring-pink-300 text-sm"
+              className="w-full mt-1 p-3 border border-gray-600 rounded-lg text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base pr-10"
               placeholder="••••••••"
               required
             />
+            <div
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-[46px] transform -translate-y-1/2 cursor-pointer text-white hover:text-teal-300"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </div>
           </div>
           <button
             type="submit"

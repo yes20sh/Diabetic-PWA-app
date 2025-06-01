@@ -12,21 +12,21 @@ const MedicinePage = () => {
   const [medicines, setMedicines] = useState([
     {
       name: 'Insulin',
-      dosage: '10u',
+      // dosage: '10u',
       type: 'Insulin - Long-acting',
       time: '08:00 AM',
       notify: true,
     },
     {
       name: 'Metformin',
-      dosage: '500 mg',
+      // dosage: '500 mg',
       type: 'Tablet',
       time: '12:30 PM',
       notify: false,
     },
     {
       name: 'Insulin',
-      dosage: '6u',
+      // dosage: '6u',
       type: 'Insulin - Rapid',
       time: '06:45 PM',
       notify: true,
@@ -44,67 +44,87 @@ const MedicinePage = () => {
     setMedicines(updated);
   };
 
+  const handleAddMedicine = () => {
+    alert("Redirect to add medicine page/form!");
+  };
+
   return (
-    <>
-         {/* Navbar: Desktop & Tablet */}
+    <div className="bg-gradient-to-br from-black via-black to-black min-h-screen pb-20 overflow-auto scrollbar-hide text-white relative">
       <NavbarDesktop />
-      {/* Navbar: Mobile */}
       <NavbarMobile />
-    <div className="bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 min-h-screen p-6">
-      {/* Header */}
-      <div className="max-w-6xl mx-auto mt-6 mb-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-purple-700">Medicine Management</h1>
-        <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition font-semibold">
-          + Add Medicine
-        </button>
-      </div>
 
-      {/* Cards */}
-      <div className="max-w-6xl mx-auto space-y-6">
-        {medicines.map((med, index) => (
-          <div key={index} className="bg-white rounded-xl shadow p-6">
-            <div className="text-xl font-bold text-purple-800 mb-2">{med.name}</div>
-            <div className="text-sm text-gray-700 mb-1">
-              <strong>Dosage:</strong> {med.dosage}
-            </div>
-            <div className="text-sm text-gray-700 mb-1">
-              <strong>Type:</strong> {med.type}
-            </div>
+      <main className="max-w-6xl mx-auto px-4 md:px-8 py-6 relative">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-teal-400">
+            Medicine Management
+          </h1>
+          <button
+            onClick={handleAddMedicine}
+            className="bg-teal-500 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-sm shadow-md transition"
+          >
+            + Add Medicine
+          </button>
+        </div>
 
-            <div className="flex items-center text-sm text-gray-700 mb-2">
-              <MdAccessTime className="text-purple-600 mr-2 text-lg" />
-              {med.time}
-            </div>
-
-            <button
-              onClick={() => toggleNotify(index)}
-              className="flex items-center text-sm text-purple-600 hover:text-purple-800 mb-2"
+        {/* Medicine Cards */}
+        <div className="flex flex-col gap-4">
+          {medicines.map((med, index) => (
+            <div
+              key={index}
+              className="bg-gray-900 rounded-xl shadow-md p-4 flex flex-col sm:flex-row justify-between"
             >
-              {med.notify ? (
-                <>
-                  <MdNotificationsActive className="mr-2 text-lg" />
-                  Notifications On
-                </>
-              ) : (
-                <>
-                  <MdNotificationsOff className="mr-2 text-lg" />
-                  Notifications Off
-                </>
-              )}
-            </button>
+              {/* Left Section */}
+              <div className="flex-1">
+                <h2 className="text-lg font-bold text-orange-400">{med.name}</h2>
+                <p className="text-sm text-gray-300">
+                  <span className="text-gray-400 font-medium">Dosage:</span> {med.dosage}
+                </p>
+                <p className="text-sm text-gray-300">
+                  <span className="text-gray-400 font-medium">Type:</span> {med.type}
+                </p>
+                <div className="flex items-center text-sm text-gray-300 mt-1">
+                  <MdAccessTime className="text-teal-400 mr-2 text-lg" />
+                  {med.time}
+                </div>
+              </div>
 
-            <button
-              onClick={() => handleDelete(index)}
-              className="flex items-center text-sm text-red-500 hover:text-red-700"
-            >
-              <MdDelete className="mr-2 text-lg" />
-              Delete
-            </button>
-          </div>
-        ))}
-      </div>
+              {/* Right Section */}
+              <div className="flex flex-col sm:items-end gap-2 mt-4 sm:mt-0">
+                <button
+                  onClick={() => toggleNotify(index)}
+                  className={`flex items-center text-sm ${
+                    med.notify
+                      ? 'text-teal-400 hover:text-teal-300'
+                      : 'text-gray-400 hover:text-teal-300'
+                  } transition`}
+                >
+                  {med.notify ? (
+                    <>
+                      <MdNotificationsActive className="mr-2 text-lg" />
+                      Notifications On
+                    </>
+                  ) : (
+                    <>
+                      <MdNotificationsOff className="mr-2 text-lg" />
+                      Notifications Off
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => handleDelete(index)}
+                  className="flex items-center text-sm text-red-500 hover:text-red-600 transition"
+                >
+                  <MdDelete className="mr-2 text-lg" />
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
     </div>
-    </>
   );
 };
 

@@ -1,35 +1,77 @@
+// import React from 'react';
+
+// const AddEntryForm = () => (
+//   <section className="p-4 mt-6">
+//     <h1 className="text-2xl font-bold text-purple-700">Add New Entry</h1>
+//     <form className="mt-4 space-y-4">
+//       <div>
+//         <label className="block text-sm font-medium text-gray-700">Glucose (mg/dL)</label>
+//         <input
+//           type="number"
+//           className="w-full mt-1 p-2 border border-purple-300 rounded-lg"
+//           placeholder="Enter value"
+//         />
+//       </div>
+//       <div>
+//         <label className="block text-sm font-medium text-gray-700">Medicine</label>
+//         <input
+//           type="text"
+//           className="w-full mt-1 p-2 border border-pink-300 rounded-lg"
+//           placeholder="e.g. Insulin - 10u"
+//         />
+//       </div>
+//       <div>
+//         <label className="block text-sm font-medium text-gray-700">Time</label>
+//         <input
+//           type="datetime-local"
+//           className="w-full mt-1 p-2 border border-indigo-300 rounded-lg"
+//         />
+//       </div>
+//       <button
+//         type="submit"
+//         className="w-full bg-purple-500 text-white py-2 rounded-xl font-semibold"
+//       >
+//         Save Entry
+//       </button>
+//     </form>
+//   </section>
+// );
+
+// export default AddEntryForm;
+
+
 import React from 'react';
 
 const AddEntryForm = () => (
-  <section className="p-4 mt-6">
-    <h1 className="text-2xl font-bold text-purple-700">Add New Entry</h1>
-    <form className="mt-4 space-y-4">
+  <section className="p-4 mt-6 bg-gray-900 rounded-lg shadow-lg max-w-md mx-auto">
+    <h1 className="text-2xl font-bold text-teal-400">Add New Entry</h1>
+    <form className="mt-4 space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700">Glucose (mg/dL)</label>
+        <label className="block text-sm font-medium text-gray-300">Glucose (mg/dL)</label>
         <input
           type="number"
-          className="w-full mt-1 p-2 border border-purple-300 rounded-lg"
+          className="w-full mt-1 p-3 rounded-lg bg-gray-800 border border-teal-600 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-400"
           placeholder="Enter value"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Medicine</label>
+        <label className="block text-sm font-medium text-gray-300">Medicine</label>
         <input
           type="text"
-          className="w-full mt-1 p-2 border border-pink-300 rounded-lg"
+          className="w-full mt-1 p-3 rounded-lg bg-gray-800 border border-orange-600 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
           placeholder="e.g. Insulin - 10u"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700">Time</label>
+        <label className="block text-sm font-medium text-gray-300">Time</label>
         <input
           type="datetime-local"
-          className="w-full mt-1 p-2 border border-indigo-300 rounded-lg"
+          className="w-full mt-1 p-3 rounded-lg bg-gray-800 border border-cyan-600 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400"
         />
       </div>
       <button
         type="submit"
-        className="w-full bg-purple-500 text-white py-2 rounded-xl font-semibold"
+        className="w-full bg-teal-600 hover:bg-teal-700 transition-colors duration-200 text-white py-3 rounded-xl font-semibold"
       >
         Save Entry
       </button>
