@@ -10,6 +10,7 @@ import ProtectedRoute from '../components/auth/ProtectedRoute';
 import RecordPage from '../pages/RecordPage';
 import AddEntry from '../pages/AddEntry';
 import AddRecordPage from '../pages/AddRecordPage';
+import AccountPage from '../pages/AccountPage';
 const AppRouter = () => {
   return (
     <Routes>
@@ -20,7 +21,7 @@ const AppRouter = () => {
       <Route path='/record' element={<RecordPage />} />
       <Route path='/addentry' element={<AddEntry />} />
       <Route path='/addrecord' element={<AddRecordPage />} />
-
+ <Route path='/account' element={<AccountPage />} />
       {/* Protected routes */}
       <Route
         path='/dashboard'

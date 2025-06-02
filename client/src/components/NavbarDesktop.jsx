@@ -1,20 +1,3 @@
-// import React from 'react';
-
-// const NavbarDesktop = () => (
-//   <header className="hidden md:flex justify-between items-center px-6 py-4 bg-white shadow">
-//     <h1 className="text-xl font-bold text-purple-600">Sweet Track</h1>
-//     <nav className="space-x-4">
-//       <a href="#" className="text-purple-600 font-semibold">Dashboard</a>
-//       <a href="#" className="text-gray-700">Records</a>
-//       <a href="#" className="text-gray-700">Add Entry</a>
-//       <a href="#" className="text-gray-700">Settings</a>
-//     </nav>
-//   </header>
-// );
-
-// export default NavbarDesktop;
-
-
 import React from 'react';
 import { Link } from "react-router-dom";
 
@@ -36,26 +19,41 @@ const NavbarDesktop = () => (
   Records
 </Link>
 
+<Link
+  to="/medicine"
+  className="text-gray-300 hover:text-orange-400 transition-colors duration-200"
+>
+  Medicine
+</Link>
+
       <Link
         to="/addentry"
         className="text-gray-300 hover:text-orange-400 transition-colors duration-200"
       >
-        Add Entry
+        Add Medicine
       </Link>
-      <a
-        href="#"
+
+<Link
+        to="/addrecord"
         className="text-gray-300 hover:text-orange-400 transition-colors duration-200"
       >
-        Settings
-      </a>
+        Add Record
+      </Link>
 
+      
+<Link
+        to="/account"
+        className="text-gray-300 hover:text-orange-400 transition-colors duration-200"
+      >
+        Account
+      </Link>
 
-       <a
-        href="#"
-        className="text-gray-300 hover:text-red-400 transition-colors duration-200"
+      <Link
+        to="/"
+        className="text-gray-300 hover:text-orange-400 transition-colors duration-200"
       >
         Logout
-      </a>
+      </Link> 
 
       
     </nav>
