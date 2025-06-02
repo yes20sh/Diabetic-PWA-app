@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import NavbarDesktop from '../components/NavbarDesktop';
 import NavbarMobile from '../components/NavbarMobile';
 import RecentRecords from '../components/RecentRecords';
+import { useNavigate } from 'react-router-dom';
 
 const RecordPage = () => {
   const [visibleRecords, setVisibleRecords] = useState(5);
@@ -12,6 +13,7 @@ const RecordPage = () => {
     afterLunchTime: ''
   });
 
+  const navigate = useNavigate();
   const handleLoadMore = () => {
     setVisibleRecords((prev) => prev + 5);
   };
@@ -32,7 +34,7 @@ const RecordPage = () => {
   };
 
   const handleAddRecord = () => {
-    alert("Redirect to add record page/form!");
+    navigate('/addrecord');
   };
 
   return (
