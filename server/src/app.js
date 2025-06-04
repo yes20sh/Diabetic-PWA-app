@@ -16,7 +16,10 @@ app.use(express.json()); // 🔹 Needed to parse JSON request bodies
 app.use(cookieParser());
 
 // 🔐 CORS Configuration (recommended)
-app.use(cors());
+app.use(cors({
+  origin: 'https://sweet-track.onrender.com',  // <-- frontend origin here
+  credentials: true,
+}));
 // app.use(cors({
 //   origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
 //   credentials: true,
