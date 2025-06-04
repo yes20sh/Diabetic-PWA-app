@@ -84,7 +84,7 @@ const AddEntryForm = ({ medicineId }) => {
     const token = getAuthToken();
     const url = medicineId
       ? `http://localhost:5000/medicine/${medicineId}`
-      : 'http://localhost:5000/medicine';
+      : 'http://localhost:5000/medicine/create';
 
     const method = medicineId ? 'PUT' : 'POST';
 
