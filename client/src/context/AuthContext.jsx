@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API}/api/auth/check`, {
+        const res = await fetch('https://sweet-track-api.onrender.com/api/auth/check', {
           credentials: 'include',
         });
         if (isMounted) {
