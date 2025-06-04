@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
+import { useNavigate } from 'react-router-dom';
 
-// Plugin for background glucose level ranges
 const glucoseLevelBackgroundPlugin = {
   id: 'glucoseLevelBackground',
   beforeDraw(chart) {
@@ -31,12 +31,15 @@ const glucoseLevelBackgroundPlugin = {
   }
 };
 
-// Helper to determine glucose zone color
 const getGlucoseColor = (value) => {
   if (value < 70) return 'rgba(59, 130, 246, 0.7)';
   if (value < 140) return 'rgba(34, 197, 94, 0.7)';
   if (value < 180) return 'rgba(245, 158, 11, 0.7)';
   return 'rgba(239, 68, 68, 0.7)';
+};
+
+const getAuthToken = () => {
+  return localStorage.getItem('token');
 };
 
 const DashboardCharts = () => {
@@ -45,25 +48,42 @@ const DashboardCharts = () => {
   const monthlyRef = useRef(null);
   const pieRef = useRef(null);
   const charts = useRef([]);
+  const [chartData, setChartData] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // ✅ Dummy Data
-    const labelsYear = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const yearlyFasting = [100, 105, 110, 98, 115, 120, 118, 112, 108, 109, 111, 113];
-    const yearlyPostLunch = [135, 140, 145, 138, 150, 155, 160, 158, 152, 148, 146, 143];
+    const fetchChartData = async () => {
+      try {
+        const token = getAuthToken();
+        const res = await fetch('http://localhost:5000/api/charts/glucose', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: 'include',
+        });
 
-    const labelsQuarter = ['Q1', 'Q2', 'Q3', 'Q4'];
-    const quarterlyFasting = [105, 111, 116, 110];
-    const quarterlyPostLunch = [140, 150, 157, 145];
+        if (res.status === 401) {
+          navigate('/login');
+          return;
+        }
 
-    const labelsMonth = ['1', '5', '10', '15', '20', '25', '30'];
-    const monthlyFasting = [105, 107, 102, 100, 106, 109, 108];
-    const monthlyPostLunch = [145, 150, 155, 148, 142, 147, 151];
+        const data = await res.json();
+        setChartData(data);
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+      }
+    };
 
+    fetchChartData();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!chartData) return;
+
+    const { yearly, quarterly, monthly } = chartData;
     const yMin = 50;
-    const yMax = 200;
+    const yMax = 400;
 
-    // Cleanup
     charts.current.forEach(chart => chart.destroy());
     charts.current = [];
 
@@ -86,22 +106,21 @@ const DashboardCharts = () => {
         y: {
           min: yMin,
           max: yMax,
-          ticks: { stepSize: 10, color: '#94a3b8' },
+          ticks: { stepSize: 50, color: '#94a3b8' },
           grid: { color: '#1e293b' }
         },
       },
     };
 
-    // Yearly Line Chart
     if (yearlyRef.current) {
       const chart = new Chart(yearlyRef.current, {
         type: 'line',
         data: {
-          labels: labelsYear,
+          labels: yearly.labels,
           datasets: [
             {
               label: 'Fasting',
-              data: yearlyFasting,
+              data: yearly.fasting,
               borderColor: 'rgba(34, 197, 94, 1)',
               backgroundColor: 'rgba(34, 197, 94, 0.15)',
               tension: 0.4,
@@ -110,7 +129,7 @@ const DashboardCharts = () => {
             },
             {
               label: 'After Lunch',
-              data: yearlyPostLunch,
+              data: yearly.postLunch,
               borderColor: 'rgba(245, 158, 11, 1)',
               backgroundColor: 'rgba(245, 158, 11, 0.15)',
               tension: 0.4,
@@ -125,22 +144,33 @@ const DashboardCharts = () => {
       charts.current.push(chart);
     }
 
-    // Quarterly Bar Chart
+    // --- Updated Quarterly Chart Section ---
     if (quarterlyRef.current) {
+      // Defensive: Ensure arrays are valid and match label length
+      const labels = Array.isArray(quarterly.labels) ? quarterly.labels : [];
+      const fasting = Array.isArray(quarterly.fasting) ? quarterly.fasting : labels.map(() => 0);
+      let postLunch = Array.isArray(quarterly.postLunch) ? quarterly.postLunch : labels.map(() => 0);
+
+      // Fix length mismatch
+      if (postLunch.length !== labels.length) {
+        console.warn('quarterly.postLunch length mismatch:', postLunch.length, 'vs', labels.length);
+        postLunch = labels.map((_, i) => postLunch[i] ?? 0);
+      }
+
       const chart = new Chart(quarterlyRef.current, {
         type: 'bar',
         data: {
-          labels: labelsQuarter,
+          labels,
           datasets: [
             {
               label: 'Fasting Avg',
-              data: quarterlyFasting,
+              data: fasting,
               backgroundColor: 'rgba(34, 197, 94, 0.7)',
               yAxisID: 'y',
             },
             {
               label: 'After Lunch Avg',
-              data: quarterlyPostLunch,
+              data: postLunch,
               backgroundColor: 'rgba(245, 158, 11, 0.7)',
               yAxisID: 'y',
             },
@@ -151,17 +181,17 @@ const DashboardCharts = () => {
       });
       charts.current.push(chart);
     }
+    // --- End Quarterly Chart Section ---
 
-    // Monthly Line Chart
     if (monthlyRef.current) {
       const chart = new Chart(monthlyRef.current, {
         type: 'line',
         data: {
-          labels: labelsMonth,
+          labels: monthly.labels,
           datasets: [
             {
               label: 'Fasting',
-              data: monthlyFasting,
+              data: monthly.fasting,
               borderColor: 'rgba(59, 130, 246, 1)',
               backgroundColor: 'rgba(59, 130, 246, 0.1)',
               tension: 0.3,
@@ -170,7 +200,7 @@ const DashboardCharts = () => {
             },
             {
               label: 'After Lunch',
-              data: monthlyPostLunch,
+              data: monthly.postLunch,
               borderColor: 'rgba(239, 68, 68, 1)',
               backgroundColor: 'rgba(239, 68, 68, 0.1)',
               tension: 0.3,
@@ -185,29 +215,27 @@ const DashboardCharts = () => {
       charts.current.push(chart);
     }
 
-    // Pie Chart
     if (pieRef.current) {
-      const currentFasting = monthlyFasting.at(-1);
-      const currentAfterLunch = monthlyPostLunch.at(-1);
+      const lastFasting = monthly.fasting.at(-1);
+      const lastPostLunch = monthly.postLunch.at(-1);
 
       const pieChart = new Chart(pieRef.current, {
         type: 'pie',
         data: {
           labels: [
-            `Current Fasting: ${currentFasting}`,
-            `Current After Lunch: ${currentAfterLunch}`
+            `Current Fasting: ${lastFasting}`,
+            `Current After Lunch: ${lastPostLunch}`
           ],
           datasets: [
             {
-              label: 'Current Glucose Levels',
-              data: [currentFasting, currentAfterLunch],
+              data: [lastFasting, lastPostLunch],
               backgroundColor: [
-                getGlucoseColor(currentFasting),
-                getGlucoseColor(currentAfterLunch),
+                getGlucoseColor(lastFasting),
+                getGlucoseColor(lastPostLunch),
               ],
               hoverOffset: 20,
-            },
-          ],
+            }
+          ]
         },
         options: {
           responsive: true,
@@ -218,15 +246,13 @@ const DashboardCharts = () => {
               callbacks: {
                 label: (context) => `${context.label}: ${context.parsed} mg/dL`
               }
-            },
-          },
-        },
+            }
+          }
+        }
       });
       charts.current.push(pieChart);
     }
-
-    return () => charts.current.forEach(chart => chart.destroy());
-  }, []);
+  }, [chartData]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

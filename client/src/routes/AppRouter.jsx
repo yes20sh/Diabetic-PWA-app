@@ -8,21 +8,20 @@ import MedicinePage from '../pages/MedicinePage';
 import FrontPage from '../pages/FrontPage';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import RecordPage from '../pages/RecordPage';
-import AddEntry from '../pages/AddEntry';
+import AddMedicinePage from '../pages/AddMedicinePage';
 import AddRecordPage from '../pages/AddRecordPage';
 import AccountPage from '../pages/AccountPage';
+
 const AppRouter = () => {
   return (
     <Routes>
+      {/* Public Routes */}
       <Route path='/' element={<FrontPage />} />
       <Route path='/login' element={<LoginPage />} />
       <Route path='/register' element={<RegisterPage />} />
       <Route path='/forgot-password' element={<ForgotPasswordPage />} />
-      <Route path='/record' element={<RecordPage />} />
-      <Route path='/addentry' element={<AddEntry />} />
-      <Route path='/addrecord' element={<AddRecordPage />} />
- <Route path='/account' element={<AccountPage />} />
-      {/* Protected routes */}
+
+      {/* Protected Routes */}
       <Route
         path='/dashboard'
         element={
@@ -31,12 +30,43 @@ const AppRouter = () => {
           </ProtectedRoute>
         }
       />
-
       <Route
         path='/medicine'
         element={
           <ProtectedRoute>
             <MedicinePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path='/record'
+        element={
+          <ProtectedRoute>
+            <RecordPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path='/addmedicine/:id?'
+        element={
+          <ProtectedRoute>
+            <AddMedicinePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path='/addrecord'
+        element={
+          <ProtectedRoute>
+            <AddRecordPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path='/account'
+        element={
+          <ProtectedRoute>
+            <AccountPage />
           </ProtectedRoute>
         }
       />

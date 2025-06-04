@@ -1,59 +1,128 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavbarDesktop from '../components/NavbarDesktop';
 import NavbarMobile from '../components/NavbarMobile';
 import { useNavigate } from 'react-router-dom';
 import {
-  MdNotificationsActive,
-  MdNotificationsOff,
-  MdAccessTime,
   MdDelete,
   MdEdit,
+  MdAccessTime,
+  MdNotificationsActive,
+  MdNotificationsOff,
 } from 'react-icons/md';
 
+const API_BASE = 'http://localhost:5000/medicine';
+
+const getAuthToken = () => {
+  return localStorage.getItem('token');
+};
+
 const MedicinePage = () => {
-  const [medicines, setMedicines] = useState([
-    {
-      name: 'Insulin',
-      dosage: '10u',
-      type: 'Insulin - Long-acting',
-      time: '08:00 AM',
-      notify: true,
-    },
-    {
-      name: 'Metformin',
-      dosage: '500 mg',
-      type: 'Tablet',
-      time: '12:30 PM',
-      notify: false,
-    },
-    {
-      name: 'Insulin',
-      dosage: '6u',
-      type: 'Insulin - Rapid',
-      time: '06:45 PM',
-      notify: true,
-    },
-  ]);
+  const [medicines, setMedicines] = useState([]);
+  const navigate = useNavigate();
 
-  const navigate = useNavigate(); // ✅ moved here
+  useEffect(() => {
+    const fetchMedicines = async () => {
+      try {
+        const token = getAuthToken();
+        const response = await fetch(`${API_BASE}/all`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: 'include',
+        });
 
-  const toggleNotify = (index) => {
-    const updated = [...medicines];
-    updated[index].notify = !updated[index].notify;
-    setMedicines(updated);
+        if (response.status === 401) {
+          navigate('/login');
+          return;
+        }
+
+        const data = await response.json();
+        setMedicines(data);
+      } catch (error) {
+        console.error('Failed to fetch medicines:', error);
+      }
+    };
+
+    fetchMedicines();
+  }, [navigate]);
+
+  const handleDelete = async (index) => {
+    const med = medicines[index];
+    if (!window.confirm(`Delete medicine "${med.name}"?`)) return;
+
+    try {
+      const token = getAuthToken();
+      const response = await fetch(`${API_BASE}/${med._id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+      });
+
+      if (response.status === 401) {
+        navigate('/login');
+        return;
+      }
+
+      if (response.ok) {
+        setMedicines(medicines.filter((_, i) => i !== index));
+      } else {
+        const err = await response.json();
+        alert(err.error || 'Failed to delete medicine');
+      }
+    } catch (error) {
+      alert('Server error: ' + error.message);
+    }
   };
 
-  const handleDelete = (index) => {
-    const updated = medicines.filter((_, i) => i !== index);
-    setMedicines(updated);
-  };
-
+  // Updated to navigate with medicine ID param
   const handleEdit = (index) => {
-    alert(`Edit medicine at index ${index}`);
+    const med = medicines[index];
+    navigate(`/addmedicine/${med._id}`);
   };
 
   const handleAddMedicine = () => {
-    navigate('/addentry'); // ✅ works correctly now
+    navigate('/addmedicine');
+  };
+
+  const toggleNotification = async (index) => {
+    const med = medicines[index];
+    const token = getAuthToken();
+    try {
+      const response = await fetch(`${API_BASE}/${med._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          name: med.name,
+          type: med.type,
+          dosage: med.dosage,
+          notification: !med.notification,
+          time: med.time,
+        }),
+      });
+
+      if (response.status === 401) {
+        navigate('/login');
+        return;
+      }
+
+      if (response.ok) {
+        const { medicine } = await response.json();
+        setMedicines((prev) =>
+          prev.map((m, i) => (i === index ? medicine : m))
+        );
+      } else {
+        const err = await response.json();
+        alert(err.error || 'Failed to update notification');
+      }
+    } catch (error) {
+      alert('Server error: ' + error.message);
+    }
   };
 
   return (
@@ -79,7 +148,7 @@ const MedicinePage = () => {
         <div className="flex flex-col gap-4">
           {medicines.map((med, index) => (
             <div
-              key={index}
+              key={med._id}
               className="bg-gray-900 rounded-xl p-4 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center"
             >
               {/* Left Section */}
@@ -97,33 +166,42 @@ const MedicinePage = () => {
                 </div>
               </div>
 
-              {/* Right Section - Buttons Line by Line */}
+              {/* Right Section - Actions */}
               <div className="flex flex-col items-start gap-2 mt-4 sm:mt-0">
-                {/* Notification */}
+                {/* Notification Toggle */}
                 <button
-                  onClick={() => toggleNotify(index)}
-                  className="flex items-center gap-2 hover:bg-blue-800  text-sm text-white bg-gray-700 px-3 py-1 rounded-md"
+                  onClick={() => toggleNotification(index)}
+                  className={`flex items-center justify-between text-sm text-white px-3 py-1 rounded-md ${
+                    med.notification ? 'bg-green-700 hover:bg-green-800' : 'bg-gray-700 hover:bg-gray-600'
+                  }`}
+                  style={{ minWidth: '120px' }}
                 >
-                  {med.notify ? <MdNotificationsActive className="text-lg" /> : <MdNotificationsOff className="text-lg" />}
-                  {med.notify ? 'Notifications On' : 'Notifications Off'}
+                  {med.notification ? 'Notify On' : 'Notify Off'}
+                  {med.notification ? (
+                    <MdNotificationsActive className="text-lg ml-2" />
+                  ) : (
+                    <MdNotificationsOff className="text-lg ml-2" />
+                  )}
                 </button>
 
-                {/* Edit */}
+                {/* Edit Button */}
                 <button
                   onClick={() => handleEdit(index)}
-                  className="flex items-center gap-2 hover:bg-yellow-800 text-sm text-white bg-gray-700 px-3 py-1 rounded-md"
+                  className="flex items-center justify-between hover:bg-yellow-800 text-sm text-white bg-gray-700 px-3 py-1 rounded-md"
+                  style={{ minWidth: '70px' }}
                 >
-                  <MdEdit className="text-lg" />
-                  Edit
+                  <span>Edit</span>
+                  <MdEdit className="text-lg ml-2" />
                 </button>
 
-                {/* Delete */}
+                {/* Delete Button */}
                 <button
                   onClick={() => handleDelete(index)}
-                  className=" flex items-center gap-2 hover:bg-red-800 text-sm text-white bg-gray-700 px-3 py-1 rounded-md"
+                  className="flex items-center justify-between hover:bg-red-800 text-sm text-white bg-gray-700 px-3 py-1 rounded-md"
+                  style={{ minWidth: '80px' }}
                 >
-                  <MdDelete className="text-lg " />
-                  Delete
+                  <span>Delete</span>
+                  <MdDelete className="text-lg ml-2" />
                 </button>
               </div>
             </div>

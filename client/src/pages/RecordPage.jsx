@@ -1,19 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import NavbarDesktop from '../components/NavbarDesktop';
 import NavbarMobile from '../components/NavbarMobile';
 import RecentRecords from '../components/RecentRecords';
 import { useNavigate } from 'react-router-dom';
 
 const RecordPage = () => {
-  const [visibleRecords, setVisibleRecords] = useState(5);
+  const [visibleRecords, setVisibleRecords] = useState(10); // updated from 5 to 10
   const [filterVisible, setFilterVisible] = useState(false);
   const [filters, setFilters] = useState({
-    date: '',
-    fastingTime: '',
-    afterLunchTime: ''
+    timeRange: '',
+    year: '',
   });
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchRecords = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const res = await fetch('http://localhost:5000/api/report/report', {
+          credentials: 'include',
+        });
+        if (!res.ok) {
+          if (res.status === 401) {
+            setError('Unauthorized access. Please log in.');
+            setRecords([]);
+            setLoading(false);
+            return;
+          }
+          throw new Error('Failed to fetch records');
+        }
+        const data = await res.json();
+        data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setRecords(data);
+      } catch (err) {
+        setError(err.message || 'Error fetching records');
+        setRecords([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecords();
+  }, [navigate]);
+
   const handleLoadMore = () => {
     setVisibleRecords((prev) => prev + 5);
   };
@@ -24,13 +58,51 @@ const RecordPage = () => {
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
+  const filteredRecords = useMemo(() => {
+    if (!filters.timeRange) return records;
+
+    const now = new Date();
+    let startDate = null;
+    let endDate = new Date();
+
+    if (filters.timeRange === 'currentMonth') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    } else if (filters.timeRange === 'lastTwoMonths') {
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+
+      // Calculate start date as 2 months ago from start of current month
+      const startMonth = currentMonth - 1 < 0 ? 11 : currentMonth - 1;
+      const startYear = currentMonth - 1 < 0 ? currentYear - 1 : currentYear;
+
+      startDate = new Date(startYear, startMonth, 1);
+      endDate = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59, 999);
+
+    } else if (filters.timeRange === 'yearly') {
+      if (!filters.year) return records;
+      startDate = new Date(filters.year, 0, 1);
+      endDate = new Date(filters.year, 11, 31, 23, 59, 59, 999);
+    }
+
+    if (!startDate) return records;
+
+    return records.filter(record => {
+      const recordDate = new Date(record.date);
+      return recordDate >= startDate && recordDate <= endDate;
+    });
+  }, [filters, records]);
+
   const handleFilterApply = () => {
-    // For now just log, you can apply filter logic later in RecentRecords
-    console.log('Applied filters:', filters);
-    alert('Filters applied (not yet functional)');
+    setVisibleRecords(10); // reset visible count on filter apply
+    setFilterVisible(false);
   };
 
   const handleAddRecord = () => {
@@ -42,7 +114,7 @@ const RecordPage = () => {
       <NavbarDesktop />
       <NavbarMobile />
       <main className="max-w-6xl mx-auto px-4 md:px-8 py-6 relative">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0">
           <h1 className="text-2xl md:text-3xl font-bold text-teal-400">
             Glucose Records
           </h1>
@@ -61,70 +133,95 @@ const RecordPage = () => {
             </button>
           </div>
         </div>
-{/* Filter Form */}
-{filterVisible && (
-  <div className="bg-gray-800 p-4 rounded-xl mb-6 space-y-4">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="flex flex-col">
-        <label htmlFor="date" className="text-sm text-gray-300 mb-1">Date</label>
-        <input
-          type="date"
-          id="date"
-          name="date"
-          value={filters.date}
-          onChange={handleFilterChange}
-          className="bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none"
-        />
-      </div>
 
-      <div className="flex flex-col">
-        <label htmlFor="fastingTime" className="text-sm text-gray-300 mb-1">Fasting Time</label>
-        <input
-          type="time"
-          id="fastingTime"
-          name="fastingTime"
-          value={filters.fastingTime}
-          onChange={handleFilterChange}
-          className="bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none"
-        />
-      </div>
+        {filterVisible && (
+          <div className="bg-gray-800 p-4 rounded-xl mb-6 space-y-4">
+            {/* Time Range Dropdown */}
+            <div>
+              <label
+                className="block mb-1 font-semibold text-teal-300"
+                htmlFor="timeRange"
+              >
+                Time Range
+              </label>
+              <select
+                id="timeRange"
+                name="timeRange"
+                value={filters.timeRange}
+                onChange={handleFilterChange}
+                className="w-full p-2 rounded bg-gray-700 text-white"
+              >
+                <option value="">Select time range</option>
+                <option value="currentMonth">Current Month</option>
+                <option value="lastTwoMonths">Last 2 Months</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
 
-      <div className="flex flex-col">
-        <label htmlFor="afterLunchTime" className="text-sm text-gray-300 mb-1">After Lunch Time</label>
-        <input
-          type="time"
-          id="afterLunchTime"
-          name="afterLunchTime"
-          value={filters.afterLunchTime}
-          onChange={handleFilterChange}
-          className="bg-gray-700 text-white px-3 py-2 rounded-lg focus:outline-none"
-        />
-      </div>
-    </div>
+            {/* Year dropdown only if yearly is selected */}
+            {filters.timeRange === 'yearly' && (
+              <div>
+                <label
+                  className="block mb-1 font-semibold text-teal-300"
+                  htmlFor="year"
+                >
+                  Year
+                </label>
+                <select
+                  id="year"
+                  name="year"
+                  value={filters.year}
+                  onChange={handleFilterChange}
+                  className="w-full p-2 rounded bg-gray-700 text-white"
+                >
+                  <option value="">Select year</option>
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const year = new Date().getFullYear() - i;
+                    return (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            )}
 
-    <div className="flex justify-end pt-2">
-      <button
-        onClick={handleFilterApply}
-        className="bg-teal-500 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-sm shadow-md transition"
-      >
-        Apply Filter
-      </button>
-    </div>
-  </div>
-)}
+            <div className="flex justify-end">
+              <button
+                onClick={handleFilterApply}
+                className="bg-teal-500 hover:bg-teal-700 px-4 py-2 rounded text-white font-semibold"
+              >
+                Apply Filter
+              </button>
+            </div>
+          </div>
+        )}
 
+        {loading ? (
+          <p className="text-center text-gray-400 mt-10">Loading records...</p>
+        ) : error ? (
+          <p className="text-center text-red-500 mt-10">{error}</p>
+        ) : (
+          <>
+            <RecentRecords
+              data={filteredRecords.slice(0, visibleRecords)}
+              filters={filters}
+              visibleCount={visibleRecords}
+            />
 
-        <RecentRecords visibleCount={visibleRecords} filters={filters} />
-
-        {/* Show More Button */}
-        <div className="flex justify-end mt-6">
-          <button
-            onClick={handleLoadMore}
-            className="text-teal-400 underline hover:text-teal-300 transition duration-200"
-          >
-            Show More
-          </button>
-        </div>
+            {filteredRecords.length > visibleRecords && (
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={handleLoadMore}
+                  className="text-teal-400 underline hover:text-teal-300 transition duration-200"
+                >
+                  Show More
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </main>
     </div>
   );

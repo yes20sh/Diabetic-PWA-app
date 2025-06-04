@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react'; // 👈 Eye icons from lucide-react
+import { useNavigate, Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(true);
@@ -110,8 +110,10 @@ const LoginPage = () => {
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </div>
-              <div className="text-right text-xs text-zinc-300 mt-1 hover:underline cursor-pointer">
-                Forgot password?
+              <div className="text-right text-xs text-zinc-300 mt-1">
+                <Link to="/forgot-password" className="hover:underline">
+                  Forgot password?
+                </Link>
               </div>
             </div>
 
@@ -130,20 +132,11 @@ const LoginPage = () => {
             <hr className="flex-grow border-gray-700" />
           </div>
 
-          <button className="w-full flex items-center justify-center border border-gray-600 text-white rounded-lg py-2 hover:bg-gray-800 transition duration-200">
-            <img 
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="w-5 h-5 mr-2"
-            />
-            Sign in with Google
-          </button>
-
           <p className="text-center text-sm text-zinc-300 mt-5">
             Don’t have an account?{' '}
-            <a href="/register" className="text-teal-400 font-semibold hover:underline">
+            <Link to="/register" className="text-teal-400 font-semibold hover:underline">
               Sign Up
-            </a>
+            </Link>
           </p>
         </div>
       )}
