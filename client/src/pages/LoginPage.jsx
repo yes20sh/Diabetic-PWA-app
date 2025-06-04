@@ -126,7 +126,8 @@ const LoginPage = () => {
             <hr className="flex-grow border-gray-700" />
           </div>
 
-          <p className="text-center text-sm text-zinc-300 mt-5">
+
+       <p className="text-center text-sm text-zinc-300 mt-5">
             Don’t have an account?{' '}
             <span
               className="text-teal-400 font-semibold hover:underline cursor-pointer"
