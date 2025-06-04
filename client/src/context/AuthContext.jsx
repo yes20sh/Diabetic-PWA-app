@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/auth/check', {
+        const res = await fetch(`${process.env.REACT_APP_API}/api/auth/check`, {
           credentials: 'include',
         });
         if (isMounted) {

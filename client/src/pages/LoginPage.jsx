@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -28,12 +26,12 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${process.env.REACT_APP_API}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
+        credentials: 'include', // necessary to send cookies
         body: JSON.stringify({ email, password }),
       });
 
@@ -92,31 +90,21 @@ const LoginPage = () => {
                 disabled={submitting}
               />
             </div>
-
-            <div className="relative">
+            <div>
               <label className="block text-sm font-medium text-orange-400">Password</label>
               <input
-                type={showPassword ? 'text' : 'password'}
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full mt-1 p-3 border border-gray-600 bg-transparent text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base pr-10"
+                className="w-full mt-1 p-3 border border-gray-600 bg-transparent text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base"
                 placeholder="••••••••"
                 required
                 disabled={submitting}
               />
-              <div
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-[46px] transform -translate-y-1/2 cursor-pointer text-white hover:text-teal-300"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </div>
-              <div className="text-right text-xs text-zinc-300 mt-1">
-                <Link to="/forgot-password" className="hover:underline">
-                  Forgot password?
-                </Link>
+              <div className="text-right text-xs text-zinc-300 mt-1 hover:underline cursor-pointer">
+                Forgot password?
               </div>
             </div>
-
             <button
               type="submit"
               className="w-full bg-teal-600 hover:bg-teal-800 text-white py-2 rounded-lg font-medium transition duration-200 text-sm sm:text-base disabled:opacity-60"
@@ -132,11 +120,20 @@ const LoginPage = () => {
             <hr className="flex-grow border-gray-700" />
           </div>
 
+          <button className="w-full flex items-center justify-center border border-gray-600 text-white rounded-lg py-2 hover:bg-gray-800 transition duration-200">
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              className="w-5 h-5 mr-2"
+            />
+            Sign in with Google
+          </button>
+
           <p className="text-center text-sm text-zinc-300 mt-5">
             Don’t have an account?{' '}
-            <Link to="/register" className="text-teal-400 font-semibold hover:underline">
+            <a href="/register" className="text-teal-400 font-semibold hover:underline">
               Sign Up
-            </Link>
+            </a>
           </p>
         </div>
       )}
