@@ -101,7 +101,13 @@ const LoginPage = () => {
                 required
                 disabled={submitting}
               />
-              <div className="text-right text-xs text-zinc-300 mt-1 hover:underline cursor-pointer">
+              <div
+                className="text-right text-xs text-zinc-300 mt-1 hover:underline cursor-pointer"
+                onClick={() => navigate('/forgot-password')}
+                tabIndex={0}
+                role="button"
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate('/forgot-password'); }}
+              >
                 Forgot password?
               </div>
             </div>
@@ -120,12 +126,17 @@ const LoginPage = () => {
             <hr className="flex-grow border-gray-700" />
           </div>
 
-
           <p className="text-center text-sm text-zinc-300 mt-5">
             Don’t have an account?{' '}
-            <a href="/register" className="text-teal-400 font-semibold hover:underline">
+            <span
+              className="text-teal-400 font-semibold hover:underline cursor-pointer"
+              onClick={() => navigate('/register')}
+              tabIndex={0}
+              role="button"
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate('/register'); }}
+            >
               Sign Up
-            </a>
+            </span>
           </p>
         </div>
       )}
