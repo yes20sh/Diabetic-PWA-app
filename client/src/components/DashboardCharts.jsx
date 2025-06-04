@@ -55,7 +55,7 @@ const DashboardCharts = () => {
     const fetchChartData = async () => {
       try {
         const token = getAuthToken();
-        const res = await fetch('http://localhost:5000/api/charts/glucose', {
+        const res = await fetch('https://sweet-track-api.onrender.com/api/charts/glucose', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

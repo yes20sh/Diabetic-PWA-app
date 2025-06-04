@@ -10,7 +10,7 @@ import {
   MdNotificationsOff,
 } from 'react-icons/md';
 
-const API_BASE = 'http://localhost:5000/medicine';
+const API_BASE = 'https://sweet-track-api.onrender.com/medicine';
 
 const getAuthToken = () => {
   return localStorage.getItem('token');

@@ -22,7 +22,7 @@ const RecordPage = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await fetch('http://localhost:5000/api/report/report', {
+        const res = await fetch('https://sweet-track-api.onrender.com/api/report/report', {
           credentials: 'include',
         });
         if (!res.ok) {

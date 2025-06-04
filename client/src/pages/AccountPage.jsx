@@ -27,7 +27,7 @@ const AccountPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/users/profile', {
+        const res = await fetch('https://sweet-track-api.onrender.com/api/users/profile', {
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
         });
@@ -77,7 +77,7 @@ const AccountPage = () => {
 
     try {
       const updated = { [editField]: inputValue.trim() };
-      const res = await fetch('http://localhost:5000/api/users/profile', {
+      const res = await fetch('https://sweet-track-api.onrender.com/api/users/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -105,7 +105,7 @@ const AccountPage = () => {
 
   const handleLogout = async () => {
     try {
-      await fetch('http://localhost:5000/api/auth/logout', {
+      await fetch('https://sweet-track-api.onrender.com/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });

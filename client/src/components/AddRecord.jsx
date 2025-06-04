@@ -26,7 +26,7 @@ const AddRecord = () => {
       try {
         if (idFromQuery) {
           setLoading(true);
-          const res = await fetch(`http://localhost:5000/api/report/${idFromQuery}`, {
+          const res = await fetch(`https://sweet-track-api.onrender.com/api/report/${idFromQuery}`, {
             method: 'GET',
             credentials: 'include',
           });
@@ -84,8 +84,8 @@ const AddRecord = () => {
 
       const response = await fetch(
         recordId
-          ? `http://localhost:5000/api/report/${recordId}`
-          : 'http://localhost:5000/api/report/create',
+          ? `https://sweet-track-api.onrender.com/api/report/${recordId}`
+          : 'https://sweet-track-api.onrender.com/api/report/create',
         {
           method: recordId ? 'PUT' : 'POST',
           headers: { 'Content-Type': 'application/json' },

@@ -10,7 +10,7 @@ const NavbarDesktop = () => {
     e.preventDefault();
     try {
       // Call your backend logout endpoint
-      await fetch('http://localhost:5000/api/auth/logout', {
+      await fetch('https://sweet-track-api.onrender.com/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });

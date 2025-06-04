@@ -43,7 +43,7 @@ const AddEntryForm = ({ medicineId }) => {
       setError('');
       try {
         const token = getAuthToken();
-        const response = await fetch(`http://localhost:5000/medicine/${medicineId}`, {
+        const response = await fetch(`https://sweet-track-api.onrender.com/medicine/${medicineId}`, {
           headers: { Authorization: `Bearer ${token}` },
           credentials: 'include',
         });
@@ -83,8 +83,8 @@ const AddEntryForm = ({ medicineId }) => {
 
     const token = getAuthToken();
     const url = medicineId
-      ? `http://localhost:5000/medicine/${medicineId}`
-      : 'http://localhost:5000/medicine/create';
+      ? `https://sweet-track-api.onrender.com/medicine/${medicineId}`
+      : 'https://sweet-track-api.onrender.com/medicine/create';
 
     const method = medicineId ? 'PUT' : 'POST';
 
