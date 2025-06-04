@@ -7,101 +7,99 @@ dotenv.config();
 
 // REGISTER FUNCTION
 export const register = async (req, res) => {
-    const { fullname, username, email, password } = req.body;
+  const { fullname, username, email, password } = req.body;
 
-    const missingFields = [];
-    if (!fullname) missingFields.push("fullname");
-    if (!username) missingFields.push("username");
-    if (!email) missingFields.push("email");
-    if (!password) missingFields.push("password");
+  const missingFields = [];
+  if (!fullname) missingFields.push("fullname");
+  if (!username) missingFields.push("username");
+  if (!email) missingFields.push("email");
+  if (!password) missingFields.push("password");
 
-    if (missingFields.length > 0) {
-        return res.status(400).json({
-            message: "All fields are required.",
-            missingFields
-        });
+  if (missingFields.length > 0) {
+    return res.status(400).json({
+      message: "All fields are required.",
+      missingFields,
+    });
+  }
+
+  try {
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        message: "Email or username already in use",
+        field: existingUser.email === email ? 'email' : 'username',
+      });
     }
 
-    try {
-        // Check if user exists
-        const existingUser = await User.findOne({
-            $or: [{ email }, { username }]
-        });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-        if (existingUser) {
-            return res.status(409).json({
-                message: "Email or username already in use",
-                field: existingUser.email === email ? 'email' : 'username'
-            });
-        }
+    const newUser = new User({
+      fullname,
+      username,
+      email,
+      password: hashedPassword,
+    });
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+    await newUser.save();
 
-        const newUser = new User({
-            fullname,
-            username,
-            email,
-            password: hashedPassword
-        });
-
-        await newUser.save();
-
-        return res.status(201).json({ message: "User registered successfully" });
-
-    } catch (error) {
-        console.error("Register Error:", error);
-        return res.status(500).json({ message: 'Server error' });
-    }
+    return res.status(201).json({ message: "User registered successfully" });
+  } catch (error) {
+    console.error("Register Error:", error);
+    return res.status(500).json({ message: 'Server error' });
+  }
 };
 
 // LOGIN FUNCTION
 export const login = async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const missing = [];
-    if (!email) missing.push("email");
-    if (!password) missing.push("password");
+  const missing = [];
+  if (!email) missing.push("email");
+  if (!password) missing.push("password");
 
-    if (missing.length > 0) {
-        return res.status(400).json({
-            message: 'Email and password are required.',
-            missing
-        });
+  if (missing.length > 0) {
+    return res.status(400).json({
+      message: 'Email and password are required.',
+      missing,
+    });
+  }
+
+  try {
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    try {
-        const user = await User.findOne({ email }).select('+password');
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET || "default_secret",
+      { expiresIn: "24h" }
+    );
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: 'Invalid credentials' });
-        }
+    // Set cookie with consistent options
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
 
-        const token = jwt.sign(
-            { id: user._id, email: user.email },
-            process.env.JWT_SECRET || "default_secret",
-            { expiresIn: "24h" }
-        );
-
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'None',
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
-});
-
-        return res.status(200).json({
-            message: "Login successful",
-            user: {
-                username: user.username,
-                email: user.email
-            }
-        });
-
-    } catch (error) {
-        console.error('Login Error:', error);
-        return res.status(500).json({ message: 'Server error' });
-    }
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error('Login Error:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
 };
 
 // AUTH CHECK FUNCTION
@@ -115,7 +113,6 @@ export const checkAuth = async (req, res) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret');
 
-    // You can optionally fetch the user to confirm they still exist
     const user = await User.findById(decoded.id).select('email username');
 
     if (!user) {
@@ -126,22 +123,22 @@ export const checkAuth = async (req, res) => {
       message: 'Authenticated',
       user: {
         email: user.email,
-        username: user.username
-      }
+        username: user.username,
+      },
     });
-
   } catch (error) {
     console.error('Auth check failed:', error);
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
 
+// LOGOUT FUNCTION (with consistent cookie options)
 export const logout = (req, res) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
       secure: true,
-      sameSite: "Lax",
+      sameSite: "None",
     });
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
@@ -149,4 +146,3 @@ export const logout = (req, res) => {
     return res.status(500).json({ message: "Logout failed" });
   }
 };
-
