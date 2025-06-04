@@ -120,14 +120,6 @@ const LoginPage = () => {
             <hr className="flex-grow border-gray-700" />
           </div>
 
-          <button className="w-full flex items-center justify-center border border-gray-600 text-white rounded-lg py-2 hover:bg-gray-800 transition duration-200">
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="w-5 h-5 mr-2"
-            />
-            Sign in with Google
-          </button>
 
           <p className="text-center text-sm text-zinc-300 mt-5">
             Don’t have an account?{' '}
