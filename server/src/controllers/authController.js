@@ -77,16 +77,17 @@ export const login = async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET || "default_secret",
+      process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
 
-    // Set cookie with consistent options
+    // Set cookie with consistent options for cross-site usage
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
       sameSite: 'None',
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      path: '/',
     });
 
     return res.status(200).json({
@@ -111,7 +112,7 @@ export const checkAuth = async (req, res) => {
       return res.status(401).json({ message: 'Not authenticated' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findById(decoded.id).select('email username');
 
@@ -132,15 +133,17 @@ export const checkAuth = async (req, res) => {
   }
 };
 
-// LOGOUT FUNCTION (with consistent cookie options)
+// LOGOUT FUNCTION (securely clears cookie)
 export const logout = (req, res) => {
   try {
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,         // Required for SameSite: 'None' on HTTPS
-  sameSite: 'None',     // Enables cross-site cookie sharing
-  maxAge: 24 * 60 * 60 * 1000, // 1 day
-});
+    // To log out, clear the cookie by setting it to an empty value and immediate expiration
+    res.cookie("token", '', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+      expires: new Date(0), // Expire immediately
+      path: '/',
+    });
 
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {

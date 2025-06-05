@@ -25,48 +25,56 @@ const AppRouter = () => {
       <Route
         path='/dashboard'
         element={
-      
+          <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
   
         }
       />
       <Route
         path='/medicine'
         element={
-  
+          <ProtectedRoute>
             <MedicinePage />
-     
+          </ProtectedRoute>
         }
       />
       <Route
         path='/record'
         element={
- 
-            <RecordPage />
+            <ProtectedRoute>
+              <RecordPage />
+            </ProtectedRoute>
 
         }
       />
       <Route
         path='/addmedicine/:id?'
         element={
+            <ProtectedRoute>
+              <AddMedicinePage />
 
-            <AddMedicinePage />
+            </ProtectedRoute>
 
         }
       />
       <Route
         path='/addrecord'
         element={
-    
-            <AddRecordPage />
+    <ProtectedRoute>
+      <AddRecordPage />
+
+    </ProtectedRoute>
 
         }
       />
       <Route
         path='/account'
         element={
-  
-            <AccountPage />
+  <ProtectedRoute>
+    <AccountPage />
+
+  </ProtectedRoute>
     
         }
       />
