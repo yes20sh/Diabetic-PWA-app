@@ -25,9 +25,9 @@ const AppRouter = () => {
       <Route
         path='/dashboard'
         element={
-          <ProtectedRoute>
+
             <DashboardPage />
-          </ProtectedRoute>
+
         }
       />
       <Route
