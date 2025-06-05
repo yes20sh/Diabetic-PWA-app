@@ -4,6 +4,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null); // Optionally store user info
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -12,13 +13,23 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         const res = await fetch('https://sweet-track-api.onrender.com/api/auth/check', {
-          credentials: 'include',
+          credentials: 'include', // Important for cookie-based JWT
         });
-        if (isMounted) {
-          setIsAuthenticated(res.ok);
+        if (!isMounted) return;
+
+        if (res.ok) {
+          const data = await res.json();
+          setIsAuthenticated(true);
+          setUser(data.user || null);
+        } else {
+          setIsAuthenticated(false);
+          setUser(null);
         }
       } catch (err) {
-        if (isMounted) setIsAuthenticated(false);
+        if (isMounted) {
+          setIsAuthenticated(false);
+          setUser(null);
+        }
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -32,7 +43,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, setIsAuthenticated }}>
+    <AuthContext.Provider value={{
+      isAuthenticated,
+      loading,
+      setIsAuthenticated,
+      user,
+      setUser,
+    }}>
       {children}
     </AuthContext.Provider>
   );
