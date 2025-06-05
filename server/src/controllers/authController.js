@@ -135,15 +135,12 @@ export const checkAuth = async (req, res) => {
 // LOGOUT FUNCTION (with consistent cookie options)
 export const logout = (req, res) => {
   try {
-res.cookie("token", token, {
+ res.cookie("token", token, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "Lax", // or "None" if cross-site, but requires HTTPS
-  domain: "sweet-track-api.onrender.com", // Correct: just the domain, no protocol
-  path: "/",
-  maxAge: 24 * 60 * 60 * 1000
+  secure: true,
+  sameSite: 'None',
+  maxAge: 24 * 60 * 60 * 1000,
 });
-
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Logout Error:", error);

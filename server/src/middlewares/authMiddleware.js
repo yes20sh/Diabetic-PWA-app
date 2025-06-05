@@ -3,26 +3,28 @@ import jwt from 'jsonwebtoken';
 const verifyToken = (req, res, next) => {
   let token = null;
 
-  // Try to get token from cookie
+  // Check cookie or header for token
   if (req.cookies && req.cookies.token) {
     token = req.cookies.token;
-  }
-  // Or from Authorization header (Bearer <token>)
-  else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+  } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
     token = req.headers.authorization.split(' ')[1];
   }
 
+  // If no token, allow request to continue without user info
   if (!token) {
-    return res.status(401).json({ message: 'Access denied. No token provided.' });
+    req.user = null;
+    return next(); // Continue without authentication
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret');
-    req.user = decoded; // { id, email, username, ... }
-    next();
+    req.user = decoded;
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token.' });
+    // If token is invalid, treat user as unauthenticated
+    req.user = null;
   }
+
+  next(); // Always proceed
 };
 
 export default verifyToken;
