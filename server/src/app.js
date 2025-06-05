@@ -17,7 +17,7 @@ app.use(cookieParser());
 
 // 🔐 CORS Configuration (recommended)
 app.use(cors({
-  origin: 'https://sweet-track-api.onrender.com',  // <-- frontend origin here
+  origin: 'https://sweet-track.onrender.com',  // <-- frontend origin here
   credentials: true,
 }));
 // app.use(cors({

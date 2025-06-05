@@ -135,12 +135,13 @@ export const checkAuth = async (req, res) => {
 // LOGOUT FUNCTION (with consistent cookie options)
 export const logout = (req, res) => {
   try {
- res.cookie("token", token, {
+res.cookie("token", token, {
   httpOnly: true,
-  secure: true,
-  sameSite: 'lax',
-  maxAge: 24 * 60 * 60 * 1000,
+  secure: true,         // Required for SameSite: 'None' on HTTPS
+  sameSite: 'None',     // Enables cross-site cookie sharing
+  maxAge: 24 * 60 * 60 * 1000, // 1 day
 });
+
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Logout Error:", error);
