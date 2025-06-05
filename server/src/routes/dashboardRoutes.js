@@ -4,6 +4,6 @@ import verifyToken from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/glucose', verifyToken, getDashboardGlucoseData);
+router.get('/glucose', getDashboardGlucoseData);
 
 export default router;
